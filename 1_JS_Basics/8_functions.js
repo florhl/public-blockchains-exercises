@@ -43,8 +43,11 @@ let hello3 = () => {
 // Create a function named printMyName that prints out your name.
 // Verify its type and invoke it.
 
-console.log('The type of printMyName is: ' + typeof printMyName);
-printMyName();
+function printMyName() {
+    console.log('The type of printMyName is: ' + typeof printMyName);
+}
+
+printMyName()
 
 // Notice that camel case naming applies also to functions.
 
@@ -55,6 +58,10 @@ printMyName();
 // input parameter and prints a sentence containing the name. For instance:
 // printSentence('Brendan');
 // 'Brendan is great!'.
+function printSentence(name) {
+    console.log(name + " is great!");
+}
+printSentence("Brendan");
 
 // EXERCISE 3. Print Person.
 ////////////////////////////
@@ -69,7 +76,7 @@ printMyName();
 // 'Brendan Eich is born is 1961 and he is great!'.
 
 function printSentence(person) {
-    // Add code here.
+    console.log(person.first + " is born in " + person.year + " and he is great!");
 }
 
 personObject = { first: 'Brendan', last: 'Eich', year: 1961 };
@@ -84,12 +91,12 @@ printSentence(personObject);
 // but only for the youngest person.
 // Hint: you may use the ternary operator ? for a more compact code.
 
-function printSentence2(person1, person2) {
-    // Add code here.
+function youngest(person1, person2) {
+    return person1.year < person2.year ? person2 : person1;
 }
 brendan = { first: 'Brendan', last: 'Eich', year: 1961 };
 linus = { first: 'Linus', last: 'Torvalds', year: 1969 };
-printSentence2(brendan, linus);
+printSentence(youngest(brendan, linus));
 
 // EXERCISE 5. Getting something back.
 //////////////////////////////////////
@@ -190,7 +197,7 @@ function isNotGreat() {
     return ' who?';
 }
 function judgePerson(person, cb) {
-    // Your code here.
+    console.log(person.first + cb())// Your code here.
 }
 
 judgePerson(brendan, isGreat);

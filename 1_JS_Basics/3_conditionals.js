@@ -34,10 +34,19 @@
 // Generate a random number from 0 to 100,000 (see Exercise Sheet "Numbers").
 // Compare this randomly generated number to the size of the population in
 // Luzern that you have previously computed in Exercise Sheet "Numbers".
+random = Math.floor(Math.random() * 100000);
+console.log(random)
 
 // If the random number is larger than the population of
 // Luzern print "Go Luzern!", if exactly equal print "Are we in the Matrix?",
 // otherwise print "Few but good!"
+if (random > 82000) {
+    console.log('Go Luzern!');
+} else if (random === 82000) {
+    console.log('Are we in the Matrix?');
+} else {
+    console.log('Few but good!')
+}
 
 // Hint: variables do not transfer magically across files, that is why you
 // need to create a new variable with the population of Luzern here.
@@ -56,9 +65,17 @@ if (2 > 1) {
 console.log(deepThought);
 
 // a. Fix it using it var instead of let.
+if (2 > 1) {
+    var deepThought = 'Everything is obvious once you know the answer.'    
+}
+console.log(deepThought);
 
 // b. Fix it using let.
-
+let deepThought;
+if (2 > 1) {
+    deepThought = 'Everything is obvious once you know the answer.'    
+}
+console.log(deepThought);
 
 // EXERCISE 3. Loose vs Strict Comparisons.
 ///////////////////////////////////////////

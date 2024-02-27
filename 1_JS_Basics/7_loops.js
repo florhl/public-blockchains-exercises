@@ -21,6 +21,10 @@ persons = [
     { first: 'Linus', last: 'Torvalds', year: 1962 }
 ];
 
+for (let i = 0; i < persons.length; i++) {
+    console.log(persons[i].year);
+}
+
 
 
 // EXERCISE 2. Verbose Loop.
@@ -35,6 +39,7 @@ persons = [
 // you loop through the items in the array.
 // Hint2: You will also need some if logic to correctly add or not the comma
 // between the first and the second element and finishing with a dot.
+
 
 // b. bonus. Can you replace the part "element 1" with "the first element" and
 // "element 2" with the "second element" and so on?

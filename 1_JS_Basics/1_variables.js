@@ -80,6 +80,8 @@ console.log('The value of the variable primitive is: ' + primitive);
 
 primitive = 'I am so primitive.';
 console.log(primitive);
+primitive = 'I am making progress';
+console.log(primitive)
 
 // Assign the new string 'I am no longer primitive. I am making progress!'
 // to primitive and print it to console.
@@ -109,6 +111,12 @@ console.log(primitive);
 
 // Now fully embrace the looseness of JavaScript by creating a variable named
 // morpho and by assigning a value to it for each primitive type in JavaScript. 
+morpho = 0;
+console.log(typeof(morpho))
+morpho = 'Test';
+console.log(typeof(morpho))
+morpho = true;
+console.log(typeof(morpho))
 
 // Then, use the typeof operator to print the type of a variable. Be ready for
 // some surprises.

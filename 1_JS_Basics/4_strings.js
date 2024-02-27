@@ -14,6 +14,8 @@ str2 = 'He said "Goodbye" and left.';
 // One string is wrapped in double quotes and the other in single quotes. 
 // What is the difference? Can you swap the content and the type of quotes?
 // Hint: characters can be escaped by placing a backslah before them (\).
+str1 = 'Please don\'t do it.';
+str2 = "He said \"Goodbye\" and left.";
 
 // EXERCISE 2. Join and Count.
 //////////////////////////////
@@ -26,12 +28,14 @@ str2 = 'Just like everyone else.';
 // a. Join together these two strings and assign the result to a new variable
 // named finalStr.
 
+finalStr = str1 + ' ' + str2;
+console.log(finalStr)
 
 // b. Did you remember to add a space between them?
 // If so, how many characters is the final string?
 // Hint: Use the length property.
 
-
+console.log(finalStr.length)
 // EXERCISE 3. Joining Different Types.
 ///////////////////////////////////////
 
@@ -39,6 +43,8 @@ str1 = "Always remember that you are absolutely unique.";
 str2 = 'Just like everyone else.';
 luzernPopulation = 82000;
 
+str2 = "Just like " + luzernPopulation + " other persons in Luzern. " + str1;
+console.log(str2);
 // Did you know that you can also join strings and numbers together?
 // Replace str2 with a new sentence that includes the total population count
 // of the city of Luzern that you computed in Sheet "Computations" exercise 2.
@@ -55,7 +61,8 @@ luzernPopulation = 82000;
 // the format `${myvariable}`.
 
 // Repeast exercise 3 using backticks.
-
+str2 = "Just like " +`${luzernPopulation} other persons in Luzern.`  + str1;
+console.log(str2);
 
 // EXERCISE 5. Such a String Manipulator.
 /////////////////////////////////////////
@@ -68,10 +75,11 @@ luzernPopulation = 82000;
 // the first part (i.e., the  initial content of str1).
 // Hint: Use the .substring() method and the length property.
 
-
+finalStr = "abcdefghijklmnopqrstuvwxyz"
+console.log(finalStr.substring(0,2))
 // f. Now shout it loud and make the it upper case.
 // Hint: Use the method .toUpperCase().
-
+console.log(finalStr.toUpperCase())
 
 // g. Let's be honest. An upper case sentence must end with an exclamation mark.
 // Replace the dot at the end of the sentence with an exclamation mark.
@@ -95,10 +103,11 @@ luzernPopulation = 82000;
 // a. Assign finalStr to a constant.
 finalStr = 'ALWAYS REMEMBER THAT YOU ARE ABSOLUTELY UNIQUE!';
 
+const c = finalStr;
 
 // b. Now try to change it to something else.
 
-
+c = "ddsaf"
 // You should have seen error. We will later learn that constants behave
 // differently with objects.
 
@@ -107,6 +116,7 @@ finalStr = 'ALWAYS REMEMBER THAT YOU ARE ABSOLUTELY UNIQUE!';
 
 myLetVariable = 'Do not re-assign me.';
 
+let myLetVariable = "test"
 
 //////////////////////////////
 // You finished this sheet! //

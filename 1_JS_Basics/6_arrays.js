@@ -27,12 +27,26 @@ console.log(typeof array);
 // inspiring personalities.
 // For example, Pablo Picasso and Napoleon Bonaparte. When are they born?
 
+
 brendan = {
     first: 'Brendan',
     last: 'Eich',
     year: 1961
 };
+brendan2 = {
+    first: 'Mark',
+    last: 'Zuckerberg',
+    year: 1975
+};
+brendan3 = {
+    first: 'Peter',
+    last: 'Parker',
+    year: 2000
+};
 
+persons = [brendan, brendan2, brendan3] 
+
+console.log(persons.length)
 // persons = ...
 
 // b. Count how many elements are in the array.
@@ -44,6 +58,8 @@ brendan = {
 // Access the second element of the array and create a string of the type: 
 // 'X was born in Y'.
 
+console.log(persons[0].first + " was born in " + persons[0].year)
+
 // Hint: arrays are 0-indexed, that is the first element has index 0,
 // the second element 1, and so on.
 
@@ -51,13 +67,15 @@ brendan = {
 //////////////////////////////////////////////////////////
 
 // Repeat exercise 2, but this time you pick a random item from the array.
+random = Math.floor(Math.random()*persons.length);
+console.log(random)
+console.log(persons[random].first + " was born in " + persons[random].year)
 
 // Hint. Generate a random number between 0 and the total
 // number of elements in the array, then "floor" it with the corresponding
 // method of the Math object.
 
 // randomNumber = ... 
-console.log(persons[randomNumber]);
 
 // EXERCISE 4. Add a new element to the array of persons.
 //////////////////////////////////////////////////////////
@@ -70,6 +88,8 @@ console.log(persons[randomNumber]);
 // Hint: There are a couple of ways of achieving this, depending to where
 // you would like to add the element. For instance the method `push`
 // will add at the bottom of the array.
+newPerson = {first: "Phil", last: "Katz", year: 1900};
+persons.push(newPerson);
 
 // Verify that you added at the bottom.
 console.log(persons[3]);
@@ -80,6 +100,8 @@ console.log(persons[3]);
 // Maybe you hurried too much with Phil Katz. What about
 // replacing him with Linus Torvalds (1969) instead?
 // Hint: simply assign a new value at a given array index.
+newPerson = {first: "Linus", last: "Torvalds", year: 1969};
+persons[3] = newPerson;
 
 // Verify who is the bottom of the array.
 console.log(persons[3]);
@@ -93,6 +115,7 @@ console.log(persons[3]);
 // containing the data about Picasso and Napoleon.
 // Hint: the method `splice` modifies the original array and returns the
 // removed elements.
+persons.splice(2, 2);
 
 // Verify the content of the updated array.
 console.log(persons);
