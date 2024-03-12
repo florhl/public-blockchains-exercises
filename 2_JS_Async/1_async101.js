@@ -18,7 +18,6 @@
 
 setTimeout(() => console.log("Hello Brendan!"), 2000);
 
-
 // b. If you solved exercise 1.a correctly you did a mistake. It is not
 // Brendan, it is Bill. Luckily, you are fast to realize your mistake.
 // You decide to cancel the timeout before it expires and create a new one
@@ -33,7 +32,9 @@ timeout = setTimeout(() => console.log("Hello Bill!"), 2000);
 // to say hello to Bill without clearing the timeout.
 
 // Hint: use a third variable to hold the name of the person.
-
+let person = "Brendan";
+setTimeout(() => console.log("Hello " + person + "!"), 2000);
+person = "Bill";
 
 // EXERCISE 2. Intervals.
 /////////////////////////
@@ -54,4 +55,7 @@ let interval = setInterval(() => {
 
 // b. Bill, shocked by your compulsive reaction, finally says "Hello..." after
 // 10 seconds. You can then clear the interval.
-
+let response = setTimeout(() => {
+    console.log("Hello...");
+    clearInterval(interval);
+}, 10000);

@@ -15,6 +15,11 @@ const path = require('path');
 /////////////////////////////////////////////////////////
 
 // Hint: As you did in file 1_wallet.
+pathToDotEnv = path.join(__dirname, '..', '.env');
+// console.log(pathToDotEnv);
+require("dotenv").config({ path: pathToDotEnv });
+
+const ethers = require("ethers");
 
 // Your code here!
 
@@ -45,7 +50,10 @@ const path = require('path');
 // Hint: check EthersJS docs for the method `JsonRpcProvider` and what 
 // parameters it needs (nested hint: you need something from the .env file).
 
+const providerKey = process.env.ALCHEMY_KEY;
 
+const mainnetUrl = `${process.env.ALCHEMY_MAINNET_API_URL}${providerKey}`;
+const mainnetProvider = new ethers.JsonRpcProvider(mainnetUrl);
 // Your code here!
 
 
@@ -64,15 +72,17 @@ const path = require('path');
 // This is an asynchronous anonymous self-executing function. It is a ugly
 // construct, but it allows you to use await inside its body.
 (async () => {
-    
-    // Your code maybe here!
-
+    let net = await mainnetProvider.getNetwork();
+    console.log('Provider\'s network name: ', net.name);
+    console.log('Provider\'s network chain id: ', Number(net.chainId));
 })();
 
 // However, the async function could also be named, and the result is:
 const network = async () => {
     
-    // Your code here!
+    let net = await mainnetProvider.getNetwork();
+    console.log('Provider\'s network name: ', net.name);
+    console.log('Provider\'s network chain id: ', Number(net.chainId));
 
 };
 
@@ -102,11 +112,12 @@ const network = async () => {
 // // Look up the current block number
 const blockNum = async () => {
     
-    // Your code here!
+    let blockNumber = await mainnetProvider.getBlockNumber();
+    console.log(blockNumber)// Your code here!
 
 };
 
-// blockNum();
+blockNum();
 
 // b. The Ethereum mainnet is one of the most secure blockchains in the world.
 // The testnets of Ethereum are a bit less secure because they might have 
@@ -118,11 +129,25 @@ const blockNum = async () => {
 
 
 // Look up the current block number in Mainnet and Goerli.
+
+const sepoliaUrl = `${process.env.ALCHEMY_SEPOLIA_API_URL}${providerKey}`;
+// console.log(sepoliaUrl);
+const sepoliaProvider = new ethers.JsonRpcProvider(sepoliaUrl);
+
+
+// Look up the current block number in Mainnet and Sepolia.
 const blockDiff = async () => {
+    let blockNumberM = await mainnetProvider.getBlockNumber();
+    console.log('Mainnet block number: ', blockNumberM);
 
-};
+    let blockNumberS = await sepoliaProvider.getBlockNumber();
+    console.log('Sepolia block number: ', blockNumberS);
 
-// blockDiff();
+    console.log('Mainnet is ' + (blockNumberM - blockNumberS) +
+                ' blocks ahead');
+}
+
+blockDiff();
 
 
 // Exercise 3. Block time.
@@ -180,9 +205,13 @@ const checkBlockTime = async (providerName = "mainnet", blocks2check = 3) => {
     
 };
 
-// checkBlockTime("Mainnet");
+//checkBlockTime("Mainnet");
 
-// checkBlockTime("Goerli");
+
+const goerliUrl = `${process.env.ALCHEMY_GOERLI_API_URL}${providerKey}`;
+// console.log(sepoliaUrl);
+const goerliProvider = new ethers.JsonRpcProvider(goerliUrl);
+//checkBlockTime("Goerli");
 
 // b. Bonus. The checkBlockTime function can be rewritten more efficiently 
 // using the Observer pattern offer by EtherS JS and listening to the 
@@ -222,11 +251,25 @@ const checkBlockTime2 = async (providerName = "mainnet", blocks2check = 3) => {
 
 const blockInfo = async () => {
     
-    // Your code here!
+    let blockNumber = await mainnetProvider.getBlockNumber();
+    let block = await mainnetProvider.getBlock(blockNumber);
+    //console.log(block);
+
+    let tx = await block.getTransaction(0);
+    //console.log(tx);
+    let txHash = block.transactions[0];
+
+    const txReceipt = await mainnetProvider.getTransactionReceipt(txHash);
+    //console.log(txReceipt);
+    console.log('A transaction from', txReceipt.to, 'to', txReceipt.from);
+
+    // Long list...
+    block = await mainnetProvider.getBlock(blockNumber, true);
+    //console.log(block.prefetchedTransactions);
 
 };
 
-// blockInfo();
+blockInfo();
 
 // Exercise 5. ENS names.
 //////////////////////////
@@ -236,11 +279,15 @@ const blockInfo = async () => {
 
 const ens = async () => {
     
-    // Your code here!
+    let unimaAddress = await sepoliaProvider.resolveName('unima.eth');
+    console.log(unimaAddress);
+
+    let ensName = await sepoliaProvider.lookupAddress(unimaAddress);
+    console.log(ensName);
 
 };
 
-// ens();
+ens();
 
 
 // Exercise 6. Get ETH balance.
@@ -260,11 +307,22 @@ const ens = async () => {
 
 const balance = async (ensName = "unima.eth") => {
 
-   // Your code here!
+   // Get the balance for "unima.eth".
+   let bal = await sepoliaProvider.getBalance(ensName);
+   // console.log(bal);
+
+   // Nicely formatted.
+   console.log(ensName, "has", ethers.formatEther(bal), "ETH");
+
+   // Check the balance is the same when resolving the ens address.
+   let unimaAddress = await sepoliaProvider.resolveName(ensName);
+   let bal2 = await sepoliaProvider.getBalance(unimaAddress);
+   
+   console.log('Are the two balances equal?', bal === bal2 ? 'Yes' : 'No');
 
 };
 
-// balance("vitalik.eth");
+balance("vitalik.eth");
 
 
 // Exercise 7. Get ERC20 Balance.
@@ -293,12 +351,28 @@ const linkABI = require('./link_abi.json');
 // Hint2: want to try it with your own address? Get some LINK ERC20 tokens here: 
 // https://faucets.chain.link/goerli
 
-const link = async () => {
+const link = async (address) => {
    
     // Your code here!
+    const contract = new ethers.Contract(linkAddress, linkABI,  goerliProvider);
+    const linkBalance = await contract.balanceOf(address);
+    console.log("LINK balance of", address, "is: ", ethers.formatEther(linkBalance));
 };
 
+link("vitalik.eth");
 
-// link();
+// In-class exercise 3
 
+const sepoliaProvider2 = new ethers.JsonRpcProvider(sepoliaUrl);
+const linkABI2 = require('./link_abi.json');
+const linkAddress2 = '0x779877A7B0D9E8603169DdbD7836e478b4624789';
 
+const link2 = async (address) => {
+   
+    // Your code here!
+    const contract = new ethers.Contract(linkAddress2, linkABI2, sepoliaProvider2);
+    const linkBalance = await contract.balanceOf(address);
+    console.log("LINK balance of", address, "is: ", ethers.formatEther(linkBalance));
+};
+
+link2("0xC4C40C7BfD525bBbf252F5EAd6D652D08FC32B34");

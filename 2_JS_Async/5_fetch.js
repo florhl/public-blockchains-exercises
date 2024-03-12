@@ -75,11 +75,26 @@ const fetch = require("node-fetch");
 const ENDPOINT = "https://swapi.dev/api/";
 
 // Change me.
-let query = 'YOU_NEED_TO_CHANGE_THIS';
+let query = 'people/2';
 
 // Hint: remember that await can be used only inside an async function.
 // If needed, you may create an anonimous async function.
 
+(async() => {
+  try {
+    const res = await fetch(ENDPOINT + query);
+
+    if (res.status >= 400) {
+      throw new Error("Bad response from server");
+    }
+
+    const user = await res.json();
+
+    console.log("We got ASYNC/SWAIT: " + user.name)
+  } catch(err) {
+    console.log(err);
+  }
+})();
 
 // Exercise 3. Optional. Fetch them all.
 ////////////////////////////////////////

@@ -101,6 +101,8 @@ const network = async () => {
 
 // Checkpoint. We use `return` to terminate the execution insted
 // of process.exit(). Why?
+// Because process.exit() immediately ends the execution whereas return lets 
+// the async method finish first
 // return;
 
 

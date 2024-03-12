@@ -35,7 +35,8 @@
 // After reading the SWAPI doc, adjust the query variable below accordingly.
 
 // Require fetch.
-const fetch = require("node-fetch");
+const fetch = require("node-fetch"); // need to reinstall older version of node-fetch
+// 1. npm uninstall node-fetch, 2. npm install node-fetch@2
 
 // API address.
 const ENDPOINT = "https://swapi.dev/api/";

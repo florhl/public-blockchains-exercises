@@ -19,7 +19,12 @@ const ethers = require("ethers");
 // a. Create a random wallet and print the address, the private key,
 // and the mnenomic phrase.
 // Hint: ethers.Wallet.createRandom();
+const wallet = ethers.Wallet.createRandom();
 
+console.log("Address:", wallet.address);
+console.log("Private key:", wallet.privateKey);
+console.log("Mnemonic:", wallet.mnemonic.phrase);
+console.log();
 
 // exit();
 
@@ -38,10 +43,9 @@ let baseDevPath = "m/44'/60'/0'/0/";
 // https://vault12.com/securemycrypto/crypto-security-basics/what-is-bip39/
 
 
-console.log("Derivation path:", wallet.path);
 
 // Your code here!
-
+console.log("Derivation path:", wallet.path);
 
 // exit();
 
@@ -56,5 +60,14 @@ exercise = 2;
 // Hint: You need to append an index to the derivation path.
 
 // Your code here!
+let mnemonic = wallet.mnemonic.phrase;
+
+let path, myWallet;
+for (let i = 0; i < 10; i++) {
+  path = `${baseDevPath}${i}`;
+  myWallet = ethers.HDNodeWallet.fromPhrase(mnemonic, path);
+  console.log("Address", i, myWallet.address);
+  console.log("Private key", i, myWallet.privateKey);
+}
 
 // exit();

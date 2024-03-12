@@ -42,6 +42,7 @@ hello = async () => {
   let promise = new Promise((resolve, reject) => {
     setTimeout(() => resolve("Hello"), 1000);
   });
+  console.log("Waiting for word...")
   let word = await promise;
   console.log(word);
 };

@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 // Loading path module for operations with file paths.
 const path = require('path');
 
@@ -41,7 +43,10 @@ console.log(pathToDotEnv);
 
 // Edit this line, then load the .env file:
 // pathToDotEnv = path.join(...);
+pathToDotEnv = path.join(__dirname, '..', '.env')
 console.log(pathToDotEnv);
+require("dotenv").config({ path: pathToDotEnv });
+
 
 // Your code here.
 
@@ -50,7 +55,12 @@ console.log(pathToDotEnv);
 
 // Your code here.
 
+const fs = require('fs');
 
+console.log(pathToDotEnv);
+if (fs.existsSync(pathToDotEnv)) {
+    console.log('You found the .env file!');
+}
 
 
 // Exercise 2. Create and fill in .env file.
@@ -76,7 +86,7 @@ exercise = 2;
 // MetaMask, e.g.: https://www.youtube.com/watch?v=KSY_bSkzb9c
  
 // See if it worked.
-console.log(process.env);
+console.log(process.env + " test"); //this line without the added string makes code crash
 
 // exit();
 
@@ -92,6 +102,12 @@ exercise = '3a';
 // if statement that prints a warning message if empty.
 // Hint: https://javascript.info/ifelse
 
+if(process.env.METAMASK_PRIVATE_KEY === "") {
+    console.log('Missing private key');
+} else {
+    console.log('Private key is not empty');
+}
+
 // Your code here!
 
 // exit();
@@ -103,6 +119,14 @@ exercise = '3a';
 exercise = '3b';
 
 // Your code here!
+let variablesToCheck= [
+    "INFURA_KEY", "INFURA_SEPOLIA", "INFURA_GOERLI", "INFURA_MAINNET",
+    "ALCHEMY_KEY", "ALCHEMY_SEPOLIA", "ALCHEMY_GOERLI", "ALCHEMY_MAINNET",
+    "METAMASK_1_ADDRESS", "METAMASK_1_PRIVATE_KEY",
+    "METAMASK_2_ADDRESS", "METAMASK_2_PRIVATE_KEY",
+    "ETHERSCAN_KEY"
+];
+console.log('Num of variables in .env to check: ', variablesToCheck.length);
 
 // exit();
 
@@ -116,10 +140,17 @@ exercise = '3b';
 
 // Solution 1. forEach.
 variablesToCheck.forEach(v => {
-    // Your code here!
+    if (!process.env[v]) {
+        console.log(process.env[v])
+        console.log(`Missing ${v}, fix your .env file`);
+    }
 });
 
 // Solution 2. For-loop.
+for (let i = 0; i < variablesToCheck.length; i++) {
+    console.log(process.env.METAMASK_1_ADDRESS)
+    console.log(process.env[variablesToCheck[i]])
+}
 
 // Your code here!
 

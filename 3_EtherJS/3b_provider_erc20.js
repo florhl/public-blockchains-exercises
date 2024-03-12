@@ -57,10 +57,11 @@ const linkABI = require('./link_abi.json');
 // https://faucets.chain.link/goerli
 
 const link = async () => {
-   
-    // Your code here!
+    const contract = new ethers.Contract(linkAddress, linkABI,  goerliProvider);
+    const linkBalance = await contract.balanceOf(address);
+    console.log("LINK balance of", address, "is: ", ethers.formatEther(linkBalance));
 };
 
 
-// link();
+link();
 

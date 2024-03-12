@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 // Loading path module for operations with file paths.
 const path = require('path');
 
@@ -40,7 +42,7 @@ console.log(pathToDotEnv);
 // Hint: use path.join(...) to build a relative path to the .env file. 
 
 pathToDotEnv = path.join(__dirname, '..', '..', '.env');
-console.log(pathToDotEnv);
+console.log(pathToDotEnv + " test");
 
 require("dotenv").config({ path: pathToDotEnv });
 
@@ -143,6 +145,8 @@ for (let index = 0; index < variablesToCheck.length; index++) {
 }
 
 // Checkpoint. Is !process.env[v] equivalent to process.env[v] === "" ?
+// No, because the first expression is true when v is null
+// and the second expression would be false in that case
 
 // exit();
 
