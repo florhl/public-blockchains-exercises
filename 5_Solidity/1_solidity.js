@@ -43,6 +43,7 @@
 
 // a. What is the meaning of the `pragma` directive at the top of the file?
 // Hint: https://solidity-by-example.org/hello-world/
+// pragma specifies the compiler version of Solidity.
 
 // b. The pragma value must be compatible with the version of solidity
 // in `hardhat.config.js. Try to set the value to a lower or higher number
@@ -107,6 +108,7 @@
 
 // Create a new _global_ variable of type `string` and query it via Ether.JS
 // (after deployment). Notice the difference if you declare it public or not.
+// ANSWER: if it is not public then error is thrown that it is not a function
 
 // c. The new variable you created at point b. is never changing, i.e., it is
 // a constant. To optimize your code, you could declare it as a constant 
@@ -126,10 +128,31 @@ async function readVar() {
     // Hint: use methods .getContractAt and .getSigners as we did in 
     // 4_Hardhat/2_ex_deploy.js
 
-    // Your code here!
+    const hardhatSigners = await hre.ethers.getSigners();
+    const hhSigner = hardhatSigners[0];
+    console.log("HH Signer address:", hhSigner.address);
+  
+    // Getting the contract.
+    const contractName = "Lock2";
+    // Change the contract address to your deployed contract address.
+    const contractAddress = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
+  
+    const lock = await hre.ethers.getContractAt(
+        contractName,
+        contractAddress,
+        hhSigner
+    );
+  
+    // Print the global variable you just created.
+  
+    console.log(contractName + " globalVar:", await lock.globalVar());
+    // Constant (followed the convention).
+    console.log(contractName + " GLOBAL_VAR:", await lock.GLOBAL_VAR());
+    
+    console.log(contractName + " unlockTime:", await lock.unlockTime());
 };
 
-// readVar();
+//readVar();
 
 // Bonus. Exercise 2B. Utility Function.
 ////////////////////////////////////////
@@ -152,7 +175,16 @@ async function readVar() {
 async function getContractAndSigner(cName, cAddress, signerIdx = 0) {
   
     // Your code here!
+    const hardhatSigners = await hre.ethers.getSigners();
+    const signer = hardhatSigners[signerIdx];
 
+    const contract = await hre.ethers.getContractAt(
+        cName,
+        cAddress,
+        signer
+    );
+
+    return [ contract, signer ];
 }
 
 // Exercise 3. Constructor.
@@ -192,6 +224,14 @@ async function constructor() {
     console.log("Exercise 3: Constructor");
 
     // Your code here!
+    const cName = "Lock3";
+    // Change the contract address to your deployed contract address.
+    const cAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+  
+    const [ lock ] = await getContractAndSigner(cName, cAddress);
+  
+    let blockNum = await lock.blockNumber();
+    console.log(cName + " blockNumber:", Number(blockNum));
 }
 
 constructor();
@@ -236,10 +276,41 @@ constructor();
 async function events() {
     console.log("Exercise 4: Events");
 
-    // Your code here!
+    const cName = "Lock3";
+    // Change the contract address to your deployed contract address.
+    const cAddress = "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9";
+  
+    const [ lock, signer ] = await getContractAndSigner(cName, cAddress);
+  
+    // ...args is a special notation (rest operator) to combine any number
+    // of input arguments into an array.
+    // https://www.freecodecamp.org/news/three-dots-operator-in-javascript/
+    lock.on("WithdrawalAttempt", (...args) => {
+        console.log("Attempted Withdrawal");
+        console.log(args);
+    });
+  
+    // You can also access the input arguments directly.
+    lock.on("Withdrawal", (balance, timestamp) => {
+        console.log("Withdrawal");
+        console.log("Balance: ", balance);
+        console.log("Timestamp: ", timestamp);
+        process.exit(0);
+    });
+  
+    // Try and catch is not necessary, but it will hide a long error message.
+    try {
+        await lock.withdraw();
+    }
+    catch (e) {
+        console.log("An exception occurred.");
+    }
+    
+    await lock.withdraw();
 }
 
-// events();
+//events();
+
 
 // f. Bonus. You can query all the past events of a smart contract using
 
@@ -251,10 +322,26 @@ async function events() {
 async function getAllEvents() {
     console.log("Bonus. Exercise 4: Get All Events");
 
-    // Your code here!
+    console.log("Bonus. Exercise 4: Get All Events");
+  
+    // Getting the contract.
+    const cName = "Lock3";
+    // Change the contract address to your deployed contract address.
+    const cAddress = "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9";
+  
+    const [ lock ] = await getContractAndSigner(cName, cAddress);
+  
+    let fromBlock = 0;
+    let toBlock = hre.ethers.provider.getBlock().number;
+    const events = await lock.queryFilter("*", fromBlock, toBlock);
+  
+    console.log(cName + ": " + events.length + " events found.");
+  
+    console.log("First Event:");
+    console.log(events[0]);
 }
 
-// getAllEvents();
+//getAllEvents();
 
 // Advanced. Exercise 5. Mappings (and payable).
 ////////////////////////////////////////////////
@@ -295,20 +382,77 @@ async function getAllEvents() {
 async function mappings() {
     console.log("Advanced. Exercise 5: Mappings (and payable)");
 
-    // Your code here!
+    console.log("Advanced. Exercise 5: Mappings (and payable)");
+  
+   // Getting the contract.
+   const cName = "Lock4";
+   // Change the contract address to your deployed contract address.
+   const cAddress = "0x7A9Ec1d04904907De0ED7b6839CcdD59c3716AC9";
+  
+   // Get five contracts for 5 signers.
+   const [ lock0, signer0 ] = await getContractAndSigner(cName, cAddress, 0);
+   const [ lock1, signer1 ] = await getContractAndSigner(cName, cAddress, 1);
+   const [ lock2, signer2 ] = await getContractAndSigner(cName, cAddress, 2);
+   const [ lock3, signer3 ] = await getContractAndSigner(cName, cAddress, 3);
+   const [ lock4, signer4 ] = await getContractAndSigner(cName, cAddress, 4);
+   
+   // This will not be added as owner.
+   const [ lock5, signer5 ] = await getContractAndSigner(cName, cAddress, 5);
+  
+    // Let's have 5 owners in total.
+    
+    // Default signer adds two other owners.
+    await lock0.addOwner(signer1.address);
+    await lock0.addOwner(signer2.address);
+    // Owner at index 2 adds another one.
+    await lock2.addOwner(signer3.address);
+    // Owner at index 3 adds another one.
+    await lock3.addOwner(signer4.address);
+  
+    // Let's count how many we have.
+    await getContractStatus(lock0);
+  
+    // Let's check the mapping values.
+    console.log('Mappings for signers (0-5):')
+    console.log(await lock0.owners(signer0.address));
+    console.log(await lock0.owners(signer1.address));
+    console.log(await lock0.owners(signer2.address));
+    console.log(await lock0.owners(signer3.address));
+    console.log(await lock0.owners(signer4.address));
+    console.log(await lock0.owners(signer5.address));
+  
+    // Each owner should get 0.2 Ether. Let's check whether it works.
+    await checkBalanceBeforeAfter(signer0, lock0);
+    await checkBalanceBeforeAfter(signer1, lock1);
+    await checkBalanceBeforeAfter(signer2, lock2);
+    await checkBalanceBeforeAfter(signer3, lock3);
+    await checkBalanceBeforeAfter(signer4, lock4);
 }
 
 const checkBalanceBeforeAfter = async (signer, lockContract) => {
     // Check the balance change for signer.
   
-    // Your code here!
+    let b1 = await signer.provider.getBalance(signer.getAddress()); //FIXME when using signer.getBalance()
+    let tx = await lockContract.withdraw();
+    await tx.wait();
+    let b2 = await signer.provider.getBalance(signer.getAddress()); //FIXME when using signer.getBalance()
+    // With Ethers v5 we need to explicitely cast to BigInt. 
+    let diff = BigInt(b2) - BigInt(b1);
+    b2 = ethers.formatEther(diff); //FIXME when using ethers.utils...
+    console.log('The balance after withdrawing is net +' + b2 + ' ETH');
+  
+    await getContractStatus(lockContract);
     
 };
 
 const getContractStatus = async lockContract => {
     // Report info about contract.
-  
-    // Your code here!
+
+    let leftInContract = await hre.ethers.provider.getBalance(lockContract.target); //FIXME lockContract.target
+    leftInContract = ethers.formatEther(leftInContract); //ERROR when using ethers.utils...
+    let numOwners = await lockContract.ownerCounter();
+    console.log('On lock there is +' + leftInContract + ' ETH left and ' + 
+                    numOwners + " owners now");
 };
 
-// mappings();
+mappings();
