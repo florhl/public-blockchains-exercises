@@ -30,7 +30,7 @@ const ethers = require("ethers");
 console.log(ethers.version);
 
 // Update info to match your contract.
-const cAddress = "";
+const cAddress = "0x9113BFf0764725A75de6B19a4dCf0716070C9A77";
 const cName = "MyERC20";
 
 const notUniMaUrl = process.env.NOT_UNIMA_URL_1;
@@ -49,10 +49,10 @@ const notUniMaProvider = new ethers.JsonRpcProvider(notUniMaUrl);
 // The deployer is the address beginning with "0x1...", unless otherwise
 // specified by in the deploy script.
 
-let signer = new ethers.Wallet(process.env.METAMASK_1_PRIVATE_KEY, notUniMaProvider);
+let signer = new ethers.Wallet(process.env.METAMASK_2_PRIVATE_KEY, notUniMaProvider);
 console.log(signer.address);
 
-let deployer = new ethers.Wallet(process.env.METAMASK_2_PRIVATE_KEY, notUniMaProvider);
+let deployer = new ethers.Wallet(process.env.METAMASK_1_PRIVATE_KEY, notUniMaProvider);
 console.log(deployer.address);
 
 const getContract = async(signer) => {
@@ -71,16 +71,87 @@ const getContract = async(signer) => {
     return c;
 };
 
+
+const getContractBalance = async (formatEther = true) => {
+    let balance = await notUniMaProvider.getBalance(cAddress);
+    if (formatEther) balance = ethers.formatEther(balance);
+    console.log("ETH in contract: ", balance);
+    return balance;
+};
+getContractBalance();
+
+const waitForTx = async (tx, verbose) => {
+    console.log('Transaction in mempool!');
+    if (verbose) console.log(tx);
+    else console.log(tx.nonce, tx.hash);
+    await tx.wait();
+    console.log('Transaction mined!');
+};
+
 const transfer = async () => {
 
-    // Your code here.
+        // Get contract.
+        const contract = await getContract(deployer);
+
+        // Check balances.
+        let balance = await contract.balanceOf(deployer.address);
+        console.log("Current sender balance: ", Number(balance));
+        let balanceReceiver = await contract.balanceOf(signer.address);
+        console.log("Current receiver balance: ", Number(balanceReceiver));
+        
+        // Transfer.
+        let amountToTransfer = 10;
+        console.log("Tokens to send: ", amountToTransfer);
+        let tx = await contract.transfer(signer.address, amountToTransfer);
+        await waitForTx(tx);
+        
+        // Check balances.
+        let balance2 = await contract.balanceOf(deployer.address);
+        console.log("Updated sender balance: ", Number(balance2));
+        let balanceReceiver2 = await contract.balanceOf(signer.address);
+        console.log("Current receiver balance: ", Number(balanceReceiver2));
 };
 
 // transfer();
 
+
+// signer
+// deployer
 const transferFrom = async () => {
 
     // Your code here.
+    // Get contracts.
+    const contract = await getContract(deployer);
+    const contractReceiver = await getContract(signer);
+    
+    // Approve an allowance for the signer of 100 coins
+    // (signer can spend on behalf of deployer)
+    let tx = await contract.approve(signer.address, 100);
+    await waitForTx(tx);
+    console.log("Receiver Signer approved for spending! (100)")
+
+    // Check balances.
+    let balance = await contract.balanceOf(deployer.address);
+    console.log("Current sender balance: ", Number(balance));
+    let balanceReceiver = await contract.balanceOf(signer.address);
+    console.log("Current receiver balance: ", Number(balanceReceiver));
+
+    // Transfer from deployer to signer. This reduces the allowance the signer has
+    let amountToTransfer = 10;
+    console.log("Tokens to transfer: ", amountToTransfer);
+    tx = await contractReceiver.transferFrom(deployer.address, signer.address, amountToTransfer);
+    await waitForTx(tx);
+
+    // Check balances.
+    let balance2 = await contract.balanceOf(deployer.address);
+    console.log("Updated sender balance: ", Number(balance2));
+    let balanceReceiver2 = await contract.balanceOf(signer.address);
+    console.log("Current receiver balance: ", Number(balanceReceiver2));
+
+    // Check allowance.
+    let allowance = await contract.allowance(deployer.address, signer.address);
+    console.log("Allowance left: ", Number(allowance));
+
 
 };
 
@@ -103,8 +174,13 @@ const transferFrom = async () => {
 const mint = async (amount) => {
   
     // Your code here.
+    const contract = await getContract(deployer);    
+    let tx = await contract.mint(deployer.address, amount);
+    await waitForTx(tx);
+    const newTotalSupply = Number(await contract.totalSupply());
+    console.log('New total supply:', newTotalSupply);
 };
-// mint(1000);
+mint(1000);
 
 
 

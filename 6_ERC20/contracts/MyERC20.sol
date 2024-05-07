@@ -42,6 +42,7 @@ contract MyERC20 is IERC20 {
     }
 
     function transfer(address receiver, uint256 numTokens) public returns (bool) {
+        
         // Check balance.
         require(numTokens <= balances[msg.sender]);
         
@@ -69,6 +70,8 @@ contract MyERC20 is IERC20 {
     }
 
     function transferFrom(address owner, address buyer, uint256 numTokens) public returns (bool) {
+        
+        // Your code here!
         require(numTokens <= balances[owner]);
         require(numTokens <= allowed[owner][msg.sender]);
 
@@ -80,9 +83,9 @@ contract MyERC20 is IERC20 {
         emit Transfer(owner, buyer, numTokens);
         
         return true;
+
     }
 
-    // 2. Mint.
     function mint (address recipient, uint256 numTokens) external {
         require(recipient != address(0), "ERC20: mint to the zero address");
 
