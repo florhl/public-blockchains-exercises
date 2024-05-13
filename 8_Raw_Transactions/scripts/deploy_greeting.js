@@ -11,7 +11,7 @@ async function main() {
   const Greeting = await hre.ethers.getContractFactory("Greeting");
   const tc = await Greeting.deploy();
 
-  await tc.deployed();
+  await tc.waitForDeployment();
 
   console.log(
     `Test Contract deployed to ${tc.target}`

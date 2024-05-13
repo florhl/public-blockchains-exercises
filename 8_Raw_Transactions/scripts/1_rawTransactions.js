@@ -7,7 +7,7 @@ const { ethers } = require("ethers");
 console.log(ethers.version);
 
 // Todo: Update this contract address.
-const cAddress = "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9";
+const cAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 const cName = "Greeting";
 
 const getContract = async (
@@ -87,7 +87,7 @@ const rawTransactionBasic = async () => {
     console.log();
 
     // Fill in this value with the encoded signature of reset():
-    let encodedSignature = "ENCODED_SIGNATURE_HERE"; 
+    let encodedSignature = "d826f88f"; 
     let calldata = "0x" + encodedSignature;
 
     // Raw transaction.
@@ -126,7 +126,9 @@ const rawTransactionBasic = async () => {
 const doKeccak256 = (signature) => {
 
     // Your code here.
-
+    signature = ethers.toUtf8Bytes(signature);
+    // Hash the bytes.
+    return ethers.keccak256(signature);
 };
 
 const rawTransactionDIY = async () => {
@@ -164,8 +166,11 @@ const rawTransactionDIY = async () => {
 
 
     // Your code here!
-    // let calldata = ... ;
+    // let calldata = ... 
 
+    // Take the first 4 bytes.
+    calldata = calldata.substring(0, 10); // 8 + 2 (0x).
+    console.log("Taking 4 Bytes:  ", calldata);
 
     const tx = await signer.sendTransaction({
         to: cAddress,
@@ -207,7 +212,12 @@ const rawTransactionDIY = async () => {
 const encodeSignature = (signature, verbose) => {
     
     // Your code here.
-
+    let hashed = doKeccak256(signature);
+    if (verbose) console.log("Hashed signature:", hashed);
+    // Take the first 4 bytes.
+    hashed = hashed.substring(0, 10); // 8 + 2 (0x).
+    if (verbose) console.log("Taking 4 Bytes:  ", hashed);
+    return hashed;
 };
 
 const rawTransactionStaticParams = async () => {
@@ -236,6 +246,12 @@ const rawTransactionStaticParams = async () => {
     // Your code here.
 
     // let calldata = ... ;
+    let encodedParam = ethers.zeroPadValue(ethers.toBeArray(1), 32);
+    encodedParam = encodedParam.substring(2);
+    console.log(encodedParam);
+
+    calldata = encodedSignature + encodedParam;
+    console.log("Calldata:      ", calldata);
 
     console.log();
     console.log("**Raw transaction**: chooseGreeting(uint8)");
@@ -271,7 +287,7 @@ const rawTransactionStaticParams = async () => {
     console.log("Greeting after reset:", greeting);    
 };
 
-// rawTransactionStaticParams();
+rawTransactionStaticParams();
 
 // Exercise 4: Raw transaction with _dynamic_ parameters & do your own encoding.
 //////////////////////////////////////////////////////////////////////
@@ -319,6 +335,17 @@ const rawTransactionDynamicParams = async () => {
    
     // Your code here.
     // let calldata = ... ;
+    
+    // Encode String parameter "Buongiorno", or get inspired here:
+    // https://www.berlitz.com/blog/hello-different-languages
+
+    const abc = new ethers.AbiCoder();
+    let encodedParam = abc.encode(["string"], ["Buongiorno"]);
+    encodedParam = encodedParam.substring(2);
+    console.log("Encoded params:", encodedParam);
+
+    calldata += encodedParam;
+    console.log("Calldata:      ", calldata);
 
     console.log();
     console.log("**Raw transaction**: setGreeting(string)");
@@ -354,7 +381,7 @@ const rawTransactionDynamicParams = async () => {
     console.log("Greeting after reset:", greeting);    
 };
 
-// rawTransactionDynamicParams();
+rawTransactionDynamicParams();
 
 
 // Helper:
