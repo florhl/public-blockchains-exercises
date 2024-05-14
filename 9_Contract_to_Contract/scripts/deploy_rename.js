@@ -10,13 +10,8 @@ const fs = require('fs');
 const path = require('path');
 
 const _saveAddresses = (addresses) => {
-
-  // Your code here.
-
-  // Save the addresses to file system.
-
-  // Hint: use a combination of fs.writeFileSync and JSON.stringiy
-  
+  fs.writeFileSync(path.join(__dirname, ".addresses.json"),
+                   JSON.stringify(addresses));
   console.log("Deployed addresses saved to .addresses.json")
 };
 
@@ -42,7 +37,7 @@ async function main() {
 
   // Save the addresses so that we can re-use them in the interact.js script.
   // Order matters.
-  _saveAddresses([ tc.address, se.address, re.address ]);
+  _saveAddresses([ tc.target, se.target, re.target ]);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
